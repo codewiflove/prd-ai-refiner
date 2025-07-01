@@ -11,9 +11,7 @@ import { Key, Database, Download, Trash2 } from "lucide-react";
 export const Settings = () => {
   const { toast } = useToast();
   const [apiKeys, setApiKeys] = useState({
-    openai: "",
-    anthropic: "",
-    perplexity: ""
+    openai: ""
   });
   const [dataStats, setDataStats] = useState({
     prds: 0,
@@ -170,43 +168,6 @@ export const Settings = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="anthropic-key">Anthropic API Key</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="anthropic-key"
-                      type="password"
-                      placeholder="sk-ant-..."
-                      value={apiKeys.anthropic}
-                      onChange={(e) => handleApiKeyChange("anthropic", e.target.value)}
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => validateApiKey("anthropic")}
-                    >
-                      Validate
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="perplexity-key">Perplexity API Key</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="perplexity-key"
-                      type="password"
-                      placeholder="pplx-..."
-                      value={apiKeys.perplexity}
-                      onChange={(e) => handleApiKeyChange("perplexity", e.target.value)}
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => validateApiKey("perplexity")}
-                    >
-                      Validate
-                    </Button>
-                  </div>
-                </div>
               </div>
 
               <div className="pt-4 border-t border-border">

@@ -1,19 +1,13 @@
 import { AIRequest, AIResponse, AIError, AIMessage } from '@/lib/types/ai';
 import { getModel } from '@/lib/config/ai-providers';
 import { OpenAIService } from './providers/openai-service';
-import { AnthropicService } from './providers/anthropic-service';
-import { PerplexityService } from './providers/perplexity-service';
 
 export class AIService {
   private openaiService: OpenAIService;
-  private anthropicService: AnthropicService;
-  private perplexityService: PerplexityService;
   private rateLimitTracker: Map<string, number[]> = new Map();
 
   constructor() {
     this.openaiService = new OpenAIService();
-    this.anthropicService = new AnthropicService();
-    this.perplexityService = new PerplexityService();
   }
 
   async generateResponse(request: AIRequest): Promise<AIResponse> {
@@ -30,16 +24,11 @@ export class AIService {
         throw this.createError('MODEL_NOT_FOUND', `Model ${request.model} not found`, request.model);
       }
 
-      // Route to appropriate service
-      switch (model.provider) {
-        case 'openai':
-          return await this.openaiService.generateResponse(request);
-        case 'anthropic':
-          return await this.anthropicService.generateResponse(request);
-        case 'perplexity':
-          return await this.perplexityService.generateResponse(request);
-        default:
-          throw this.createError('PROVIDER_NOT_SUPPORTED', `Provider ${model.provider} not supported`, request.model);
+      // Route to OpenAI service
+      if (model.provider === 'openai') {
+        return await this.openaiService.generateResponse(request);
+      } else {
+        throw this.createError('PROVIDER_NOT_SUPPORTED', `Provider ${model.provider} not supported`, request.model);
       }
     } catch (error: any) {
       if (error.code && error.provider) {
@@ -59,15 +48,10 @@ export class AIService {
       throw this.createError('STREAMING_NOT_SUPPORTED', `Model ${request.model} does not support streaming`, request.model);
     }
 
-    switch (model.provider) {
-      case 'openai':
-        return await this.openaiService.generateStreamResponse(request, onChunk);
-      case 'anthropic':
-        return await this.anthropicService.generateStreamResponse(request, onChunk);
-      case 'perplexity':
-        return await this.perplexityService.generateStreamResponse(request, onChunk);
-      default:
-        throw this.createError('PROVIDER_NOT_SUPPORTED', `Provider ${model.provider} not supported`, request.model);
+    if (model.provider === 'openai') {
+      return await this.openaiService.generateStreamResponse(request, onChunk);
+    } else {
+      throw this.createError('PROVIDER_NOT_SUPPORTED', `Provider ${model.provider} not supported`, request.model);
     }
   }
 

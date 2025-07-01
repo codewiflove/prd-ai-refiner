@@ -100,7 +100,7 @@ export const APIKeyManager = () => {
         </Alert>
 
         <Tabs defaultValue="openai" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-1">
             {AI_PROVIDERS.map(provider => (
               <TabsTrigger key={provider.id} value={provider.id} className="flex items-center gap-2">
                 {provider.name}
@@ -119,9 +119,7 @@ export const APIKeyManager = () => {
                 <div>
                   <h4 className="font-medium mb-2">{provider.name} Configuration</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    {provider.id === 'openai' && 'Get your API key from https://platform.openai.com/api-keys (Recommended for general use)'}
-                    {provider.id === 'anthropic' && 'Get your API key from https://console.anthropic.com/ (Best for detailed PRDs)'}
-                    {provider.id === 'perplexity' && 'Get your API key from https://www.perplexity.ai/settings/api (Good for research-based PRDs)'}
+                    Get your API key from https://platform.openai.com/api-keys
                   </p>
                 </div>
 

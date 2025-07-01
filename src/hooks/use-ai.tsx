@@ -108,7 +108,7 @@ export const useAI = (options: UseAIOptions = {}) => {
 // Hook for generating PRDs specifically
 export const usePRDGeneration = () => {
   const { generateResponse, isLoading, error } = useAI({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'gpt-4o',
     temperature: 0.5,
     maxTokens: 4000,
   });

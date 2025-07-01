@@ -31,52 +31,6 @@ export const AI_PROVIDERS: AIProvider[] = [
       }
     ],
     apiKeyRequired: true
-  },
-  {
-    id: 'anthropic',
-    name: 'Anthropic',
-    models: [
-      {
-        id: 'claude-3-5-sonnet-20241022',
-        name: 'Claude 3.5 Sonnet',
-        provider: 'anthropic',
-        maxTokens: 8192,
-        costPer1kTokens: 0.015,
-        supportsStreaming: true
-      },
-      {
-        id: 'claude-3-haiku-20240307',
-        name: 'Claude 3 Haiku',
-        provider: 'anthropic',
-        maxTokens: 4096,
-        costPer1kTokens: 0.0025,
-        supportsStreaming: true
-      }
-    ],
-    apiKeyRequired: true
-  },
-  {
-    id: 'perplexity',
-    name: 'Perplexity',
-    models: [
-      {
-        id: 'llama-3.1-sonar-large-128k-online',
-        name: 'Llama 3.1 Sonar Large',
-        provider: 'perplexity',
-        maxTokens: 4096,
-        costPer1kTokens: 0.001,
-        supportsStreaming: true
-      },
-      {
-        id: 'llama-3.1-sonar-small-128k-online',
-        name: 'Llama 3.1 Sonar Small',
-        provider: 'perplexity',
-        maxTokens: 4096,
-        costPer1kTokens: 0.0002,
-        supportsStreaming: true
-      }
-    ],
-    apiKeyRequired: true
   }
 ];
 
