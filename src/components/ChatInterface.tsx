@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, User, Palette, Code } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAI } from "@/hooks/use-ai";
+import { AIService } from "@/lib/services/ai-service";
+import { AIPersona } from "@/lib/types/ai";
+import { Send, User, Palette, Code, Loader2, AlertCircle, Settings } from "lucide-react";
 
 interface Message {
   id: string;
@@ -36,7 +40,9 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   
   const [newMessage, setNewMessage] = useState("");
   const [selectedPersona, setSelectedPersona] = useState<"designer" | "engineer">("designer");
+  const [hasApiKey, setHasApiKey] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { generateResponse, isLoading, error } = useAI();
 
   useEffect(() => {
     // Load chat history from localStorage
@@ -44,6 +50,10 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     }
+
+    // Check for API key
+    const openaiKey = AIService.getApiKey('openai');
+    setHasApiKey(!!openaiKey);
   }, []);
 
   useEffect(() => {
@@ -58,8 +68,8 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
     }
   }, [messages]);
 
-  const sendMessage = () => {
-    if (!newMessage.trim()) return;
+  const sendMessage = async () => {
+    if (!newMessage.trim() || isLoading || !hasApiKey) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -69,41 +79,39 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = newMessage;
+    setNewMessage("");
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(newMessage, selectedPersona, prd);
-      const aiMessage: Message = {
+    try {
+      const aiResponse = await generateResponse(
+        currentMessage,
+        selectedPersona as AIPersona,
+        `Here is the PRD for context:\n\n${prd}`
+      );
+
+      if (aiResponse) {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: aiResponse,
+          sender: selectedPersona,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      }
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: aiResponse,
+        content: "I apologize, but I'm having trouble generating a response right now. Please check your API key configuration and try again.",
         sender: selectedPersona,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
-
-    setNewMessage("");
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
-  const generateAIResponse = (userMessage: string, persona: "designer" | "engineer", prd: string): string => {
-    const designerResponses = [
-      "From a design perspective, I'd suggest focusing on user-centered design principles. Consider creating user personas and journey maps to better understand your target audience.",
-      "Great question! For the UI/UX, I recommend implementing a clean, intuitive interface with clear visual hierarchy. Have you considered accessibility requirements?",
-      "The user experience could be enhanced by adding micro-interactions and smooth transitions. This will make your app feel more polished and engaging.",
-      "I notice your PRD could benefit from more specific design requirements. Consider adding sections about color schemes, typography, and brand guidelines.",
-      "For better user engagement, think about implementing onboarding flows and tooltips to guide new users through your app's features."
-    ];
-
-    const engineerResponses = [
-      "From a technical standpoint, I'd recommend considering scalability from the start. What's your expected user load and data volume?",
-      "The tech stack you've chosen looks solid. Have you thought about implementing proper error handling and logging systems?",
-      "Great question! For the backend architecture, consider implementing microservices if you expect the app to grow significantly.",
-      "Your PRD would benefit from more technical specifications. Consider adding API endpoints, database schemas, and security requirements.",
-      "For performance optimization, I suggest implementing caching strategies and considering CDN usage for static assets."
-    ];
-
-    const responses = persona === "designer" ? designerResponses : engineerResponses;
-    return responses[Math.floor(Math.random() * responses.length)];
+  const openSettings = () => {
+    window.dispatchEvent(new CustomEvent('open-settings'));
   };
 
   const getAvatarIcon = (sender: string) => {
@@ -151,6 +159,21 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
         </p>
       </div>
 
+      {!hasApiKey && (
+        <div className="p-4 border-b border-border">
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>OpenAI API key required for AI chat functionality.</span>
+              <Button size="sm" variant="outline" onClick={openSettings}>
+                <Settings className="w-3 h-3 mr-1" />
+                Configure
+              </Button>
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
+
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message) => (
@@ -183,19 +206,47 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
               </div>
             </div>
           ))}
+          
+          {isLoading && (
+            <div className="flex gap-3">
+              <Avatar className={`w-8 h-8 ${getAvatarColor(selectedPersona)}`}>
+                <AvatarFallback>
+                  {getAvatarIcon(selectedPersona)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 max-w-[80%]">
+                <div className="p-3 rounded-lg bg-muted">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <p className="text-sm text-muted-foreground">Thinking...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
 
       <div className="p-4 border-t border-border">
         <div className="flex gap-2">
           <Input
-            placeholder={`Ask the ${selectedPersona} for feedback...`}
+            placeholder={hasApiKey ? `Ask the ${selectedPersona} for feedback...` : "Configure API key to chat"}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+            onKeyPress={(e) => e.key === "Enter" && !isLoading && hasApiKey && sendMessage()}
+            disabled={!hasApiKey || isLoading}
           />
-          <Button onClick={sendMessage} variant="cosmic" size="icon">
-            <Send className="w-4 h-4" />
+          <Button 
+            onClick={sendMessage} 
+            variant="cosmic" 
+            size="icon"
+            disabled={!hasApiKey || isLoading || !newMessage.trim()}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
