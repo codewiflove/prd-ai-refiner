@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,7 @@ import cosmicHero from "@/assets/cosmic-hero.jpg";
 const Index = () => {
   const [currentPRD, setCurrentPRD] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("generate");
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Load existing PRD from localStorage
@@ -21,6 +22,19 @@ const Index = () => {
       setCurrentPRD(savedPRD);
       setActiveTab("view");
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        heroRef.current.style.transform = `translate3d(0, ${parallax}px, 0)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handlePRDGenerated = (prd: string) => {
@@ -35,33 +49,36 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div 
-        className="relative h-[40vh] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${cosmicHero})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background"></div>
-        <div className="relative z-10 flex items-center justify-center h-full">
-          <div className="text-center space-y-4 max-w-4xl mx-auto px-6">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-8 h-8 text-primary" />
-              <h1 className="text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
-                PRD Genie
-              </h1>
-            </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Transform your app ideas into comprehensive Product Requirements Documents with AI-powered assistance from designer and engineer personas.
-            </p>
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <Badge variant="outline" className="text-sm">
-                <Zap className="w-3 h-3 mr-1" />
-                AI-Powered
-              </Badge>
-              <Badge variant="outline" className="text-sm">
-                Designer & Engineer Personas
-              </Badge>
-              <Badge variant="outline" className="text-sm">
-                Local Storage Only
-              </Badge>
+      <div className="relative h-[40vh] overflow-hidden">
+        <div 
+          ref={heroRef}
+          className="absolute inset-0 w-full h-[120%] bg-cover bg-center bg-no-repeat will-change-transform"
+          style={{ backgroundImage: `url(${cosmicHero})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background"></div>
+          <div className="relative z-10 flex items-center justify-center h-full">
+            <div className="text-center space-y-4 max-w-4xl mx-auto px-6">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Sparkles className="w-8 h-8 text-primary" />
+                <h1 className="text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
+                  PRD Genie
+                </h1>
+              </div>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Transform your app ideas into comprehensive Product Requirements Documents with AI-powered assistance from designer and engineer personas.
+              </p>
+              <div className="flex items-center justify-center gap-4 mt-6">
+                <Badge variant="outline" className="text-sm">
+                  <Zap className="w-3 h-3 mr-1" />
+                  AI-Powered
+                </Badge>
+                <Badge variant="outline" className="text-sm">
+                  Designer & Engineer Personas
+                </Badge>
+                <Badge variant="outline" className="text-sm">
+                  Local Storage Only
+                </Badge>
+              </div>
             </div>
           </div>
         </div>

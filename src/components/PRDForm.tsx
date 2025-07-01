@@ -109,7 +109,7 @@ ${formData.timeline || "Not specified"}
   };
 
   return (
-    <Card className="p-6 bg-card/50 backdrop-blur-sm border-border">
+    <Card className="p-6 bg-card/50 backdrop-blur-sm border-border animate-float hover:animate-glow-pulse transition-all duration-500 will-change-transform shadow-cosmic hover:shadow-glow">
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold mb-2">Generate Your PRD</h2>
@@ -214,7 +214,7 @@ ${formData.timeline || "Not specified"}
           onClick={generatePRD}
           variant="cosmic"
           size="lg"
-          className="w-full"
+          className="w-full animate-shimmer bg-gradient-cosmic bg-[length:200%_100%] hover:scale-105 transition-transform duration-300"
         >
           Generate PRD
         </Button>
