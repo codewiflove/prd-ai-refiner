@@ -95,7 +95,7 @@ export const APIKeyManager = () => {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            API keys are stored locally in your browser. For production use, consider using Supabase for secure key management.
+            <strong>Important:</strong> You need to configure at least one AI provider's API key to generate real PRDs. API keys are stored locally in your browser for security.
           </AlertDescription>
         </Alert>
 
@@ -119,9 +119,9 @@ export const APIKeyManager = () => {
                 <div>
                   <h4 className="font-medium mb-2">{provider.name} Configuration</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    {provider.id === 'openai' && 'Get your API key from https://platform.openai.com/api-keys'}
-                    {provider.id === 'anthropic' && 'Get your API key from https://console.anthropic.com/'}
-                    {provider.id === 'perplexity' && 'Get your API key from https://www.perplexity.ai/settings/api'}
+                    {provider.id === 'openai' && 'Get your API key from https://platform.openai.com/api-keys (Recommended for general use)'}
+                    {provider.id === 'anthropic' && 'Get your API key from https://console.anthropic.com/ (Best for detailed PRDs)'}
+                    {provider.id === 'perplexity' && 'Get your API key from https://www.perplexity.ai/settings/api (Good for research-based PRDs)'}
                   </p>
                 </div>
 

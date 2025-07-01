@@ -65,18 +65,18 @@ const Index = () => {
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Transform your app ideas into comprehensive Product Requirements Documents with AI-powered assistance from designer and engineer personas.
+                Transform your app ideas into comprehensive, professional Product Requirements Documents using advanced AI. Get real PRDs, not templates.
               </p>
               <div className="flex items-center justify-center gap-4 mt-6">
                 <Badge variant="outline" className="text-sm">
                   <Zap className="w-3 h-3 mr-1" />
-                  AI-Powered
+                  Real AI PRDs
                 </Badge>
                 <Badge variant="outline" className="text-sm">
                   Designer & Engineer Personas
                 </Badge>
                 <Badge variant="outline" className="text-sm">
-                  Local Storage Only
+                  Multiple AI Models
                 </Badge>
               </div>
             </div>
