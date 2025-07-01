@@ -23,7 +23,7 @@ When reviewing PRDs or providing feedback:
 
 Keep responses practical, actionable, and focused on improving the user experience.`,
     temperature: 0.7,
-    preferredModel: 'claude-3-5-sonnet-20241022'
+    preferredModel: 'gpt-4o-mini'
   },
   engineer: {
     systemPrompt: `You are a Senior Software Engineer AI assistant with expertise in full-stack development and technical architecture. Your specializations include:
@@ -72,7 +72,7 @@ When reviewing PRDs or providing feedback:
 
 Focus on strategic thinking, data-driven decisions, and practical execution planning.`,
     temperature: 0.5,
-    preferredModel: 'claude-3-5-sonnet-20241022'
+    preferredModel: 'gpt-4o-mini'
   },
   user_researcher: {
     systemPrompt: `You are a User Research Specialist AI assistant with deep expertise in understanding user needs and behaviors. Your core competencies include:
@@ -97,6 +97,6 @@ When reviewing PRDs or providing feedback:
 
 Emphasize evidence-based insights and user-centered validation throughout the product development process.`,
     temperature: 0.6,
-    preferredModel: 'claude-3-5-sonnet-20241022'
+    preferredModel: 'gpt-4o-mini'
   }
 };

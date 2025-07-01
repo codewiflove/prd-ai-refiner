@@ -17,8 +17,8 @@ export const AI_PROVIDERS: AIProvider[] = [
         id: 'gpt-4o-mini',
         name: 'GPT-4o Mini',
         provider: 'openai',
-        maxTokens: 4096,
-        costPer1kTokens: 0.015,
+        maxTokens: 16384,
+        costPer1kTokens: 0.00015,
         supportsStreaming: true
       },
       {

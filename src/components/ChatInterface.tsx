@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAI } from "@/hooks/use-ai";
 import { AIService } from "@/lib/services/ai-service";
 import { AIPersona } from "@/lib/types/ai";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Send, User, Palette, Code, Loader2, AlertCircle, Settings } from "lucide-react";
 
 interface Message {
@@ -45,15 +46,40 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   const { generateResponse, isLoading, error } = useAI();
 
   useEffect(() => {
-    // Load chat history from localStorage
-    const savedMessages = localStorage.getItem('chatHistory');
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    }
+    try {
+      console.log('ChatInterface: Initializing...');
+      
+      // Load chat history from localStorage
+      const savedMessages = localStorage.getItem('chatHistory');
+      if (savedMessages) {
+        const parsed = JSON.parse(savedMessages);
+        console.log('ChatInterface: Loaded saved messages:', parsed.length);
+        setMessages(parsed);
+      }
 
-    // Check for API key
-    const openaiKey = AIService.getApiKey('openai');
-    setHasApiKey(!!openaiKey);
+      // Check for API key
+      const openaiKey = AIService.getApiKey('openai');
+      console.log('ChatInterface: API key exists:', !!openaiKey);
+      setHasApiKey(!!openaiKey);
+    } catch (error) {
+      console.error('ChatInterface: Error during initialization:', error);
+      // Reset to default state on error
+      setMessages([
+        {
+          id: "1",
+          content: "Hello! I'm the Designer AI. I can help you improve the user experience and visual design aspects of your PRD. What would you like to discuss?",
+          sender: "designer",
+          timestamp: new Date()
+        },
+        {
+          id: "2", 
+          content: "Hi there! I'm the Engineer AI. I can provide technical insights and help optimize the technical implementation details in your PRD. How can I assist you?",
+          sender: "engineer",
+          timestamp: new Date()
+        }
+      ]);
+      setHasApiKey(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,7 +95,16 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || isLoading || !hasApiKey) return;
+    if (!newMessage.trim() || isLoading || !hasApiKey) {
+      console.log('ChatInterface: sendMessage blocked', { 
+        hasMessage: !!newMessage.trim(), 
+        isLoading, 
+        hasApiKey 
+      });
+      return;
+    }
+
+    console.log('ChatInterface: Sending message', { message: newMessage, persona: selectedPersona });
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -83,11 +118,14 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
     setNewMessage("");
 
     try {
+      console.log('ChatInterface: Generating AI response...');
       const aiResponse = await generateResponse(
         currentMessage,
         selectedPersona as AIPersona,
         `Here is the PRD for context:\n\n${prd}`
       );
+
+      console.log('ChatInterface: AI response received', { response: aiResponse?.substring(0, 100) });
 
       if (aiResponse) {
         const aiMessage: Message = {
@@ -97,12 +135,21 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
           timestamp: new Date()
         };
         setMessages(prev => [...prev, aiMessage]);
+      } else {
+        console.warn('ChatInterface: No AI response received');
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: "I didn't receive a response. Please try again.",
+          sender: selectedPersona,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
       }
     } catch (error) {
-      console.error('Error generating AI response:', error);
+      console.error('ChatInterface: Error generating AI response:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "I apologize, but I'm having trouble generating a response right now. Please check your API key configuration and try again.",
+        content: `I apologize, but I'm having trouble generating a response right now. Error: ${error instanceof Error ? error.message : 'Unknown error'}. Please check your API key configuration and try again.`,
         sender: selectedPersona,
         timestamp: new Date()
       };
@@ -131,7 +178,8 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
+    <ErrorBoundary>
+      <Card className="h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">AI Consultation</h3>
@@ -251,5 +299,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
         </div>
       </div>
     </Card>
+    </ErrorBoundary>
   );
 };
