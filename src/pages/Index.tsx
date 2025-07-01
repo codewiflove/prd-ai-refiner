@@ -22,6 +22,14 @@ const Index = () => {
       setCurrentPRD(savedPRD);
       setActiveTab("view");
     }
+
+    // Listen for settings open events
+    const handleOpenSettings = () => {
+      setActiveTab("settings");
+    };
+    
+    window.addEventListener('open-settings', handleOpenSettings);
+    return () => window.removeEventListener('open-settings', handleOpenSettings);
   }, []);
 
   useEffect(() => {

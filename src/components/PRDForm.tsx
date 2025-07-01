@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { usePRDGeneration } from "@/hooks/use-ai";
-import { Sparkles, Send, Loader2 } from "lucide-react";
+import { AIService } from "@/lib/services/ai-service";
+import { Sparkles, Send, Loader2, Settings, AlertCircle } from "lucide-react";
 
 interface PRDFormProps {
   onPRDGenerated: (prd: string) => void;
@@ -44,12 +45,36 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const checkApiKey = () => {
+    const openaiKey = AIService.getApiKey('openai');
+    return openaiKey && openaiKey.length > 10;
+  };
+
   const generatePRDDocument = async () => {
     if (!formData.appName.trim() || !formData.description.trim()) {
       toast({
         title: "Missing Information",
         description: "Please provide at least an app name and description.",
         variant: "destructive"
+      });
+      return;
+    }
+
+    // Check for API key before attempting generation
+    if (!checkApiKey()) {
+      toast({
+        title: "API Key Required",
+        description: "Please configure your OpenAI API key in Settings before generating a PRD.",
+        variant: "destructive",
+        action: (
+          <Button variant="outline" size="sm" onClick={() => {
+            // Trigger settings tab
+            window.dispatchEvent(new CustomEvent('open-settings'));
+          }}>
+            <Settings className="w-3 h-3 mr-1" />
+            Open Settings
+          </Button>
+        )
       });
       return;
     }
@@ -69,11 +94,31 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
           description: "Your Product Requirements Document has been created successfully using AI."
         });
       }
-    } catch (err) {
+    } catch (err: any) {
+      let errorMessage = "Failed to generate PRD. Please try again.";
+      let actionButton = null;
+
+      if (err.message?.includes('API key')) {
+        errorMessage = "Invalid or missing OpenAI API key. Please check your Settings.";
+        actionButton = (
+          <Button variant="outline" size="sm" onClick={() => {
+            window.dispatchEvent(new CustomEvent('open-settings'));
+          }}>
+            <Settings className="w-3 h-3 mr-1" />
+            Settings
+          </Button>
+        );
+      } else if (err.message?.includes('rate limit')) {
+        errorMessage = "Rate limit exceeded. Please wait a moment and try again.";
+      } else if (err.message?.includes('quota')) {
+        errorMessage = "OpenAI quota exceeded. Please check your OpenAI account.";
+      }
+
       toast({
         title: "Generation Failed",
-        description: "Failed to generate PRD. Please check your API keys in Settings and try again.",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        action: actionButton
       });
     }
   };
@@ -85,6 +130,7 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
   };
 
   const isFormValid = formData.appName.trim() && formData.description.trim();
+  const hasApiKey = checkApiKey();
 
   return (
     <Card className="p-6 bg-card/50 backdrop-blur-sm border-border animate-float hover:animate-glow-pulse transition-all duration-500 will-change-transform shadow-cosmic hover:shadow-glow">
@@ -220,6 +266,31 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
           </div>
         </div>
 
+        {!hasApiKey && (
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  API Key Required
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  You need to configure your OpenAI API key in Settings before generating a PRD.
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-amber-800 border-amber-300 hover:bg-amber-100 dark:text-amber-200 dark:border-amber-700 dark:hover:bg-amber-900/50"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+                >
+                  <Settings className="w-3 h-3 mr-1" />
+                  Open Settings
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
             <p className="text-sm text-destructive">{error}</p>
@@ -228,7 +299,7 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
 
         <Button 
           onClick={generatePRDDocument}
-          disabled={!isFormValid || isLoading}
+          disabled={!isFormValid || isLoading || !hasApiKey}
           variant="cosmic"
           size="lg"
           className="w-full animate-shimmer bg-gradient-cosmic bg-[length:200%_100%] hover:scale-105 transition-transform duration-300"
@@ -248,7 +319,11 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
 
         <div className="text-center text-sm text-muted-foreground">
           <p>AI will analyze your input and create a comprehensive PRD</p>
-          <p className="mt-1">Make sure to configure your AI API keys in Settings first</p>
+          {hasApiKey ? (
+            <p className="mt-1 text-green-600 dark:text-green-400">✓ API key configured</p>
+          ) : (
+            <p className="mt-1 text-amber-600 dark:text-amber-400">⚠ Configure API keys in Settings first</p>
+          )}
         </div>
       </div>
     </Card>

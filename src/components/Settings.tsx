@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Key, Database, Download, Trash2 } from "lucide-react";
+import { AIService } from "@/lib/services/ai-service";
+import { Key, Database, Download, Trash2, CheckCircle, AlertCircle } from "lucide-react";
 
 export const Settings = () => {
   const { toast } = useToast();
@@ -20,11 +21,9 @@ export const Settings = () => {
   });
 
   useEffect(() => {
-    // Load API keys from localStorage
-    const savedKeys = localStorage.getItem('apiKeys');
-    if (savedKeys) {
-      setApiKeys(JSON.parse(savedKeys));
-    }
+    // Load API keys from AIService
+    const openaiKey = AIService.getApiKey('openai') || '';
+    setApiKeys({ openai: openaiKey });
 
     // Calculate data usage
     const prds = localStorage.getItem('currentPRD') ? 1 : 0;
@@ -32,7 +31,7 @@ export const Settings = () => {
     const messages = chatHistory ? JSON.parse(chatHistory).length : 0;
     
     // Estimate storage usage (rough calculation)
-    const storageKeys = ['currentPRD', 'prdData', 'chatHistory', 'apiKeys'];
+    const storageKeys = ['currentPRD', 'prdData', 'chatHistory'];
     let totalSize = 0;
     storageKeys.forEach(key => {
       const item = localStorage.getItem(key);
@@ -51,7 +50,12 @@ export const Settings = () => {
   const handleApiKeyChange = (provider: string, value: string) => {
     const newKeys = { ...apiKeys, [provider]: value };
     setApiKeys(newKeys);
-    localStorage.setItem('apiKeys', JSON.stringify(newKeys));
+    
+    if (value.trim()) {
+      AIService.setApiKey(provider, value.trim());
+    } else {
+      AIService.removeApiKey(provider);
+    }
     
     toast({
       title: "API Key Updated",
@@ -67,22 +71,41 @@ export const Settings = () => {
         description: `Please enter an API key for ${provider}.`,
         variant: "destructive"
       });
-      return;
+      return false;
     }
 
-    // Simple validation (in a real app, you'd make an API call)
-    if (key.length < 10) {
+    // Enhanced validation
+    if (provider === 'openai' && !key.startsWith('sk-')) {
+      toast({
+        title: "Invalid OpenAI Key",
+        description: "OpenAI API keys should start with 'sk-'.",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    if (key.length < 20) {
       toast({
         title: "Invalid API Key",
         description: "The API key appears to be too short.",
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "API Key Valid",
-        description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format looks correct.`
-      });
+      return false;
     }
+
+    toast({
+      title: "API Key Valid",
+      description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format looks correct.`
+    });
+    return true;
+  };
+
+  const getKeyStatus = (provider: string) => {
+    const key = apiKeys[provider as keyof typeof apiKeys];
+    if (!key) return 'missing';
+    if (provider === 'openai' && !key.startsWith('sk-')) return 'invalid';
+    if (key.length < 20) return 'invalid';
+    return 'valid';
   };
 
   const exportData = () => {
@@ -150,7 +173,15 @@ export const Settings = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="openai-key">OpenAI API Key</Label>
+                  <Label htmlFor="openai-key" className="flex items-center gap-2">
+                    OpenAI API Key
+                    {getKeyStatus('openai') === 'valid' && (
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                    )}
+                    {getKeyStatus('openai') === 'invalid' && (
+                      <AlertCircle className="w-4 h-4 text-red-500" />
+                    )}
+                  </Label>
                   <div className="flex gap-2">
                     <Input
                       id="openai-key"
@@ -158,6 +189,8 @@ export const Settings = () => {
                       placeholder="sk-..."
                       value={apiKeys.openai}
                       onChange={(e) => handleApiKeyChange("openai", e.target.value)}
+                      className={getKeyStatus('openai') === 'valid' ? 'border-green-500' : 
+                                getKeyStatus('openai') === 'invalid' ? 'border-red-500' : ''}
                     />
                     <Button 
                       variant="outline" 
@@ -166,6 +199,16 @@ export const Settings = () => {
                       Validate
                     </Button>
                   </div>
+                  {getKeyStatus('openai') === 'valid' && (
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      ✓ API key configured and ready to use
+                    </p>
+                  )}
+                  {getKeyStatus('openai') === 'invalid' && (
+                    <p className="text-xs text-red-600 dark:text-red-400">
+                      ⚠ Invalid API key format
+                    </p>
+                  )}
                 </div>
 
               </div>
