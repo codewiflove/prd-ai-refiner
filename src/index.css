@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Cosmic Dark Theme - Primary Colors */
+    --background: 222 47% 7%;
+    --foreground: 215 30% 92%;
+
+    --card: 222 47% 9%;
+    --card-foreground: 215 30% 92%;
+
+    --popover: 222 47% 9%;
+    --popover-foreground: 215 30% 92%;
+
+    /* Cosmic Primary - Deep Purple */
+    --primary: 260 75% 60%;
+    --primary-foreground: 222 47% 7%;
+    --primary-glow: 260 85% 70%;
+
+    /* Cosmic Secondary - Dark Purple */
+    --secondary: 222 47% 12%;
+    --secondary-foreground: 215 30% 92%;
+
+    /* Cosmic Muted */
+    --muted: 222 47% 10%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Cosmic Accent - Cyan Glow */
+    --accent: 190 95% 65%;
+    --accent-foreground: 222 47% 7%;
+    --accent-glow: 190 100% 75%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 215 30% 92%;
+
+    --border: 222 47% 15%;
+    --input: 222 47% 12%;
+    --ring: 260 75% 60%;
+
+    --radius: 0.75rem;
+
+    /* Cosmic Gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(260 75% 60%) 0%, hsl(190 95% 65%) 100%);
+    --gradient-cosmic-subtle: linear-gradient(135deg, hsl(222 47% 9%) 0%, hsl(222 47% 12%) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(260 75% 60% / 0.3) 0%, transparent 70%);
+    
+    /* Cosmic Shadows */
+    --shadow-cosmic: 0 4px 20px hsl(260 75% 60% / 0.3);
+    --shadow-glow: 0 0 30px hsl(190 95% 65% / 0.4);
+    --shadow-card: 0 8px 32px hsl(222 47% 4% / 0.5);
+    
+    /* Lava Theme Colors */
+    --lava-primary: 10 85% 55%;
+    --lava-secondary: 30 95% 60%;
+    --lava-glow: 15 100% 65%;
+    
+    /* Lava Gradients */
+    --gradient-lava: linear-gradient(135deg, hsl(10 85% 55%) 0%, hsl(30 95% 60%) 50%, hsl(45 100% 65%) 100%);
+    --gradient-lava-intense: linear-gradient(135deg, hsl(5 90% 50%) 0%, hsl(25 100% 55%) 50%, hsl(40 100% 60%) 100%);
+    
+    /* Lava Shadows */
+    --shadow-lava: 0 4px 25px hsl(15 100% 65% / 0.4), 0 0 40px hsl(10 85% 55% / 0.3);
+    --shadow-lava-intense: 0 6px 30px hsl(15 100% 65% / 0.6), 0 0 50px hsl(10 85% 55% / 0.4), inset 0 1px 0 hsl(45 100% 70% / 0.3);
+
+    /* Animation Timing */
+    --transition-cosmic: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.4s ease-out;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 215 30% 92%;
+    --sidebar-primary: 260 75% 60%;
+    --sidebar-primary-foreground: 222 47% 7%;
+    --sidebar-accent: 222 47% 12%;
+    --sidebar-accent-foreground: 215 30% 92%;
+    --sidebar-border: 222 47% 15%;
+    --sidebar-ring: 260 75% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

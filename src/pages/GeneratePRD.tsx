@@ -318,9 +318,9 @@ const GeneratePRD = () => {
             <Button 
               onClick={generatePRDDocument}
               disabled={!isFormValid || isLoading || !hasApiKey}
-              variant="cosmic"
+              variant="lava"
               size="lg"
-              className="w-full animate-shimmer bg-gradient-cosmic bg-[length:200%_100%] hover:scale-105 transition-transform duration-300"
+              className="w-full animate-shimmer bg-[length:200%_100%] hover:scale-105 transition-transform duration-300"
             >
               {isLoading ? (
                 <>

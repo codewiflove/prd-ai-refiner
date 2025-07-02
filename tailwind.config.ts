@@ -65,15 +65,26 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			colors: {
+				lava: {
+					primary: 'hsl(var(--lava-primary))',
+					secondary: 'hsl(var(--lava-secondary))',
+					glow: 'hsl(var(--lava-glow))'
+				}
+			},
 			backgroundImage: {
 				'gradient-cosmic': 'var(--gradient-cosmic)',
 				'gradient-cosmic-subtle': 'var(--gradient-cosmic-subtle)',
-				'gradient-glow': 'var(--gradient-glow)'
+				'gradient-glow': 'var(--gradient-glow)',
+				'gradient-lava': 'var(--gradient-lava)',
+				'gradient-lava-intense': 'var(--gradient-lava-intense)'
 			},
 			boxShadow: {
 				'cosmic': 'var(--shadow-cosmic)',
 				'glow': 'var(--shadow-glow)',
-				'card': 'var(--shadow-card)'
+				'card': 'var(--shadow-card)',
+				'lava': 'var(--shadow-lava)',
+				'lava-intense': 'var(--shadow-lava-intense)'
 			},
 			transitionTimingFunction: {
 				'cosmic': 'cubic-bezier(0.4, 0, 0.2, 1)',
