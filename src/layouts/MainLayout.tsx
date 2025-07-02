@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useRef, useEffect } from "react";
-import { Sparkles, Zap } from "lucide-react";
+import { Sparkles, Zap, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import cosmicHero from "@/assets/cosmic-hero.jpg";
 
@@ -52,6 +52,15 @@ const MainLayout = () => {
                 <Badge variant="outline" className="text-sm">
                   Multiple AI Models
                 </Badge>
+              </div>
+            </div>
+            
+            {/* Animated Scroll Arrow */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+              <div className="flex flex-col items-center gap-2 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                <span className="text-sm text-muted-foreground">Scroll down</span>
+                <ChevronDown className="w-6 h-6 text-primary animate-bounce-arrow" />
               </div>
             </div>
           </div>

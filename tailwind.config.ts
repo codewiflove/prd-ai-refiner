@@ -187,6 +187,17 @@ export default {
 						transform: 'translateY(-6px) scale(0.8)'
 					}
 				}
+				'bounce-arrow': {
+					'0%, 20%, 50%, 80%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'40%': {
+						transform: 'translateY(-8px)'
+					},
+					'60%': {
+						transform: 'translateY(-4px)'
+					}
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -197,7 +208,8 @@ export default {
 				'lava-flow': 'lava-flow 4s ease-in-out infinite',
 				'lava-glow': 'lava-glow 2s ease-in-out infinite',
 				'lava-bubble': 'lava-bubble 3s ease-in-out infinite',
-				'lava-particle': 'lava-particle 2s ease-in-out infinite'
+				'lava-particle': 'lava-particle 2s ease-in-out infinite',
+				'bounce-arrow': 'bounce-arrow 2s infinite'
 			}
 		}
 	},
