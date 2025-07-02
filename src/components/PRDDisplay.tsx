@@ -61,21 +61,23 @@ export const PRDDisplay = ({ prd, onEdit }: PRDDisplayProps) => {
   return (
     <Card className="bg-card/50 backdrop-blur-sm border-border">
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Your Generated PRD</h2>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={onEdit}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold">Your Generated PRD</h2>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button variant="outline" size="sm" onClick={onEdit} className="w-full sm:w-auto">
               <Edit className="w-4 h-4 mr-2" />
               Edit
             </Button>
-            <Button variant="outline" size="sm" onClick={copyToClipboard}>
-              <Copy className="w-4 h-4 mr-2" />
-              Copy
-            </Button>
-            <Button variant="cosmic" size="sm" onClick={downloadPRD}>
-              <Download className="w-4 h-4 mr-2" />
-              Download
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={copyToClipboard} className="flex-1 sm:flex-none">
+                <Copy className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline ml-2">Copy</span>
+              </Button>
+              <Button variant="cosmic" size="sm" onClick={downloadPRD} className="flex-1 sm:flex-none">
+                <Download className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline ml-2">Download</span>
+              </Button>
+            </div>
           </div>
         </div>
         

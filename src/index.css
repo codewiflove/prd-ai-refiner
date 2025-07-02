@@ -95,6 +95,24 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    /* Improve mobile scrolling performance */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Improve touch targets for mobile */
+  button, a, input, textarea, select {
+    @apply touch-manipulation;
+  }
+
+  /* Prevent zoom on inputs in iOS */
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  @media (min-width: 640px) {
+    input, textarea, select {
+      font-size: 14px;
+    }
   }
 }
 

@@ -23,10 +23,10 @@ const buttonVariants = cva(
         lava: "relative overflow-hidden bg-gradient-lava text-white shadow-lava hover:shadow-lava-intense hover:bg-gradient-lava-intense transform hover:scale-105 transition-all duration-500 animate-lava-glow before:absolute before:inset-0 before:bg-gradient-lava-animate before:opacity-0 hover:before:opacity-30 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full hover:after:translate-x-full after:transition-transform after:duration-1000",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-11 sm:h-10 px-4 py-2 min-w-[44px] touch-manipulation",
+        sm: "h-10 sm:h-9 rounded-md px-3 min-w-[40px] touch-manipulation",
+        lg: "h-12 sm:h-11 rounded-md px-6 sm:px-8 min-w-[48px] touch-manipulation",
+        icon: "h-11 w-11 sm:h-10 sm:w-10 min-w-[44px] touch-manipulation",
       },
     },
     defaultVariants: {

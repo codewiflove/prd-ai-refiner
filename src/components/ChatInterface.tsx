@@ -207,7 +207,7 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
 
   const renderMessageContent = (message: Message) => {
     if (message.sender === "user") {
-      return <p className="text-sm">{message.content}</p>;
+      return <p className="text-sm break-words">{message.content}</p>;
     }
 
     // For AI messages, use markdown rendering
@@ -215,7 +215,13 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
       <div className="text-sm">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
-          className="prose prose-sm dark:prose-invert max-w-none"
+          className="prose prose-sm dark:prose-invert max-w-none break-words"
+          components={{
+            p: ({ children }) => <p className="mb-2 last:mb-0 break-words">{children}</p>,
+            ul: ({ children }) => <ul className="ml-4 mb-2 last:mb-0">{children}</ul>,
+            ol: ({ children }) => <ol className="ml-4 mb-2 last:mb-0">{children}</ol>,
+            strong: ({ children }) => <strong className="font-semibold break-words">{children}</strong>,
+          }}
         >
           {message.content}
         </ReactMarkdown>
@@ -228,14 +234,14 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
 
   return (
     <ErrorBoundary>
-      <Card className="h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">AI Consultation</h3>
-            <div className="flex gap-2">
+      <Card className="h-[500px] sm:h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
+        <div className="p-3 sm:p-4 border-b border-border">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-3 sm:mb-4">
+            <h3 className="text-base sm:text-lg font-semibold">AI Consultation</h3>
+            <div className="flex gap-2 w-full sm:w-auto">
               <Badge 
                 variant={selectedPersona === "designer" ? "default" : "outline"}
-                className="cursor-pointer transition-all hover:scale-105"
+                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation"
                 onClick={() => setSelectedPersona("designer")}
               >
                 <Palette className="w-3 h-3 mr-1" />
@@ -243,7 +249,7 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
               </Badge>
               <Badge 
                 variant={selectedPersona === "engineer" ? "default" : "outline"}
-                className="cursor-pointer transition-all hover:scale-105"
+                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation"
                 onClick={() => setSelectedPersona("engineer")}
               >
                 <Code className="w-3 h-3 mr-1" />
@@ -251,30 +257,30 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
               </Badge>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Chat with AI personas to get feedback on your PRD. Select a persona to direct your questions.
           </p>
         </div>
 
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-          <div className="space-y-4">
+        <ScrollArea className="flex-1 p-3 sm:p-4" ref={scrollAreaRef}>
+          <div className="space-y-3 sm:space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-3 ${message.sender === "user" ? "flex-row-reverse" : ""} animate-in slide-in-from-bottom-2 duration-300`}
+                className={`flex gap-2 sm:gap-3 ${message.sender === "user" ? "flex-row-reverse" : ""} animate-in slide-in-from-bottom-2 duration-300`}
               >
-                <Avatar className={`w-8 h-8 ${getAvatarColor(message.sender)} transition-all`}>
+                <Avatar className={`w-7 h-7 sm:w-8 sm:h-8 ${getAvatarColor(message.sender)} transition-all flex-shrink-0`}>
                   <AvatarFallback>
                     {getAvatarIcon(message.sender)}
                   </AvatarFallback>
                 </Avatar>
                 <div
-                  className={`flex-1 max-w-[80%] ${
+                  className={`flex-1 max-w-[85%] sm:max-w-[80%] ${
                     message.sender === "user" ? "text-right" : ""
                   }`}
                 >
                   <div
-                    className={`p-3 rounded-lg transition-all ${
+                    className={`p-2 sm:p-3 rounded-lg transition-all ${
                       message.sender === "user"
                         ? "bg-primary text-primary-foreground ml-auto"
                         : "bg-muted border"
@@ -294,7 +300,7 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t border-border">
+        <div className="p-3 sm:p-4 border-t border-border">
           <div className="flex gap-2">
             <Input
               placeholder={`Ask the ${selectedPersona} for feedback...`}
@@ -307,22 +313,27 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
                 }
               }}
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 h-11 sm:h-10"
             />
             <Button 
               onClick={sendMessage} 
               disabled={isLoading || !newMessage.trim()}
               size="sm"
+              className="min-w-[60px] touch-manipulation"
             >
               {isLoading ? (
                 <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
               ) : (
-                'Send'
+                <>
+                  <Send className="w-4 h-4 sm:hidden" />
+                  <span className="hidden sm:inline">Send</span>
+                </>
               )}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            AI responses support markdown formatting • Press Enter to send
+            <span className="hidden sm:inline">AI responses support markdown formatting • Press Enter to send</span>
+            <span className="sm:hidden">Press Enter to send</span>
           </p>
         </div>
       </Card>
