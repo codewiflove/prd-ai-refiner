@@ -20,7 +20,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         cosmic: "bg-gradient-cosmic text-primary-foreground hover:shadow-glow transform hover:scale-105",
         glow: "bg-accent text-accent-foreground shadow-glow hover:shadow-cosmic transform hover:scale-105",
-        lava: "bg-gradient-lava text-white shadow-lava hover:shadow-lava-intense hover:bg-gradient-lava-intense transform hover:scale-105 transition-all duration-300",
+        lava: "relative overflow-hidden bg-gradient-lava text-white shadow-lava hover:shadow-lava-intense hover:bg-gradient-lava-intense transform hover:scale-105 transition-all duration-500 animate-lava-glow before:absolute before:inset-0 before:bg-gradient-lava-animate before:opacity-0 hover:before:opacity-30 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full hover:after:translate-x-full after:transition-transform after:duration-1000",
       },
       size: {
         default: "h-10 px-4 py-2",

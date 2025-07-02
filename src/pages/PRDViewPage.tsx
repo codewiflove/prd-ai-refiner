@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import ReactMarkdown from "react-markdown";
+import { LavaButton } from "@/components/ui/lava-button";
 import remarkGfm from "remark-gfm";
 import { 
   Download, 
@@ -234,15 +235,16 @@ const PRDViewPage = () => {
 
         {/* Chat with AI Button */}
         <div className="text-center">
-          <Button 
-            variant="cosmic" 
+          <LavaButton 
+            variant="default" 
             size="lg"
+            glow="intense"
+            particles={true}
             onClick={() => setIsChatOpen(true)}
-            className="animate-shimmer bg-gradient-cosmic bg-[length:200%_100%]"
           >
             <MessageSquare className="w-4 h-4 mr-2" />
             Chat with AI Experts to Refine PRD
-          </Button>
+          </LavaButton>
         </div>
 
         {/* Chat Sidebar */}

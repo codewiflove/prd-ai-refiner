@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePRDGeneration } from "@/hooks/use-ai";
 import { AIService } from "@/lib/services/ai-service";
 import { Sparkles, Send, Loader2, Settings, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { LavaButton } from "@/components/ui/lava-button";
 
 interface FormData {
   appName: string;
@@ -315,12 +316,14 @@ const GeneratePRD = () => {
               </div>
             )}
 
-            <Button 
+            <LavaButton 
               onClick={generatePRDDocument}
               disabled={!isFormValid || isLoading || !hasApiKey}
-              variant="lava"
+              variant="intense"
               size="lg"
-              className="w-full animate-shimmer bg-[length:200%_100%] hover:scale-105 transition-transform duration-300"
+              glow="intense"
+              particles={true}
+              className="w-full"
             >
               {isLoading ? (
                 <>
@@ -333,7 +336,7 @@ const GeneratePRD = () => {
                   Generate PRD with AI
                 </>
               )}
-            </Button>
+            </LavaButton>
 
             <div className="text-center text-sm text-muted-foreground space-y-2">
               <p>AI will analyze your input and create a comprehensive PRD</p>
