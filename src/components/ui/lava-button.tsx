@@ -9,35 +9,24 @@ const lavaButtonVariants = cva(
     variants: {
       variant: {
         default: [
-          "bg-gradient-lava text-white font-semibold",
+          "lava-button-enhanced text-white font-semibold",
           "shadow-lava hover:shadow-lava-intense",
           "transform hover:scale-105 active:scale-95",
-          "animate-lava-glow",
-          // Animated background overlay
-          "before:absolute before:inset-0 before:bg-gradient-lava-animate before:opacity-0 hover:before:opacity-40 before:transition-opacity before:duration-700",
-          // Shimmer effect
-          "after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:-translate-x-full hover:after:translate-x-full after:transition-transform after:duration-1000 after:ease-out",
-          // Bubble effect
-          "hover:animate-lava-bubble",
+          "animate-lava-glow hover:animate-lava-bubble",
         ],
         intense: [
-          "bg-gradient-lava-intense text-white font-bold",
+          "lava-button-enhanced text-white font-bold",
           "shadow-lava-intense hover:shadow-lava-pulse",
           "transform hover:scale-110 active:scale-95",
-          "animate-lava-glow",
-          // More intense effects
-          "before:absolute before:inset-0 before:bg-gradient-lava-animate before:opacity-20 hover:before:opacity-60 before:transition-opacity before:duration-500",
-          "after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/40 after:to-transparent after:-translate-x-full hover:after:translate-x-full after:transition-transform after:duration-800",
-          "hover:animate-lava-bubble",
-          // Additional glow layers
-          "before:shadow-lava-pulse",
+          "animate-lava-glow hover:animate-lava-bubble",
+          "brightness-110 saturate-110",
         ],
         subtle: [
           "bg-gradient-lava text-white",
           "shadow-lava/50 hover:shadow-lava",
           "transform hover:scale-102 active:scale-98",
-          "before:absolute before:inset-0 before:bg-gradient-lava-animate before:opacity-0 hover:before:opacity-20 before:transition-opacity before:duration-500",
-        ]
+          "hover:animate-lava-bubble",
+        ],
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -85,27 +74,18 @@ const LavaButton = React.forwardRef<HTMLButtonElement, LavaButtonProps>(
         
         {/* Particle effect overlay */}
         {particles && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "absolute w-1 h-1 bg-lava-bright rounded-full opacity-60",
-                  "animate-pulse",
-                )}
-                style={{
-                  left: `${20 + i * 10}%`,
-                  top: `${30 + (i % 2) * 40}%`,
-                  animationDelay: `${i * 0.3}s`,
-                  animationDuration: `${2 + i * 0.2}s`,
-                }}
-              />
-            ))}
+          <div className="lava-particles">
+            <div className="lava-particle"></div>
+            <div className="lava-particle"></div>
+            <div className="lava-particle"></div>
+            <div className="lava-particle"></div>
+            <div className="lava-particle"></div>
+            <div className="lava-particle"></div>
           </div>
         )}
         
         {/* Inner glow effect */}
-        <div className="absolute inset-[1px] rounded-lg bg-gradient-to-b from-white/20 to-transparent opacity-50 pointer-events-none" />
+        <div className="absolute inset-[1px] rounded-lg bg-gradient-to-b from-white/25 via-transparent to-orange-400/10 opacity-60 pointer-events-none" />
       </Comp>
     )
   }
