@@ -20,8 +20,21 @@ const GeneratePRD = () => {
   const { generatePRD, isLoading, error } = usePRDGeneration();
   
   const [formData, setFormData] = useState<FormData>(() => {
-    const saved = localStorage.getItem('prdFormData');
-    return saved ? JSON.parse(saved) : {
+    try {
+      const saved = localStorage.getItem('prdFormData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Ensure prdIdea is always a string
+        return {
+          prdIdea: typeof parsed.prdIdea === 'string' ? parsed.prdIdea : ""
+        };
+      }
+    } catch (error) {
+      console.warn('Failed to parse saved form data:', error);
+    }
+    
+    // Default fallback
+    return {
       prdIdea: ""
     };
   });
