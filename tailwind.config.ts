@@ -182,12 +182,12 @@ export default {
 						opacity: '1',
 						transform: 'translateY(-4px) scale(1.1)'
 					},
-					'100%': {
-						opacity: '0',
-						transform: 'translateY(-6px) scale(0.8)'
-					}
+				'100%': {
+					opacity: '0',
+					transform: 'translateY(-6px) scale(0.8)'
 				}
-				'bounce-arrow': {
+			},
+			'bounce-arrow': {
 					'0%, 20%, 50%, 80%, 100%': {
 						transform: 'translateY(0)'
 					},

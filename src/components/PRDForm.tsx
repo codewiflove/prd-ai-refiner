@@ -80,7 +80,19 @@ export const PRDForm = ({ onPRDGenerated }: PRDFormProps) => {
     }
 
     try {
-      const prd = await generatePRD(formData);
+      // Transform formData into the expected format
+      const prdIdea = `
+App Name: ${formData.appName}
+Description: ${formData.description}
+Target Audience: ${formData.targetAudience}
+Platform: ${formData.platform}
+Primary Goals: ${formData.primaryGoals}
+Key Features: ${formData.keyFeatures}
+Tech Stack: ${formData.techStack}
+Timeline: ${formData.timeline}
+      `.trim();
+      
+      const prd = await generatePRD({ prdIdea });
       
       if (prd) {
         // Store in localStorage
