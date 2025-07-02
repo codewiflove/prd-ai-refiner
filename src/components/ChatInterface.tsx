@@ -234,14 +234,14 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
 
   return (
     <ErrorBoundary>
-      <Card className="h-[500px] sm:h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
+      <Card className="h-[calc(100vh-180px)] sm:h-[600px] flex flex-col bg-card/50 backdrop-blur-sm border-border">
         <div className="p-3 sm:p-4 border-b border-border">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-3 sm:mb-4">
             <h3 className="text-base sm:text-lg font-semibold">AI Consultation</h3>
             <div className="flex gap-2 w-full sm:w-auto">
               <Badge 
                 variant={selectedPersona === "designer" ? "default" : "outline"}
-                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation"
+                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation h-10 min-h-[44px]"
                 onClick={() => setSelectedPersona("designer")}
               >
                 <Palette className="w-3 h-3 mr-1" />
@@ -249,7 +249,7 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
               </Badge>
               <Badge 
                 variant={selectedPersona === "engineer" ? "default" : "outline"}
-                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation"
+                className="cursor-pointer transition-all hover:scale-105 flex-1 sm:flex-none justify-center touch-manipulation h-10 min-h-[44px]"
                 onClick={() => setSelectedPersona("engineer")}
               >
                 <Code className="w-3 h-3 mr-1" />
@@ -269,18 +269,18 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
                 key={message.id}
                 className={`flex gap-2 sm:gap-3 ${message.sender === "user" ? "flex-row-reverse" : ""} animate-in slide-in-from-bottom-2 duration-300`}
               >
-                <Avatar className={`w-7 h-7 sm:w-8 sm:h-8 ${getAvatarColor(message.sender)} transition-all flex-shrink-0`}>
+                <Avatar className={`w-8 h-8 sm:w-8 sm:h-8 ${getAvatarColor(message.sender)} transition-all flex-shrink-0`}>
                   <AvatarFallback>
                     {getAvatarIcon(message.sender)}
                   </AvatarFallback>
                 </Avatar>
                 <div
-                  className={`flex-1 max-w-[85%] sm:max-w-[80%] ${
+                  className={`flex-1 max-w-[calc(100%-3rem)] sm:max-w-[80%] ${
                     message.sender === "user" ? "text-right" : ""
                   }`}
                 >
                   <div
-                    className={`p-2 sm:p-3 rounded-lg transition-all ${
+                    className={`p-3 sm:p-3 rounded-lg transition-all overflow-hidden ${
                       message.sender === "user"
                         ? "bg-primary text-primary-foreground ml-auto"
                         : "bg-muted border"

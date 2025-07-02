@@ -128,67 +128,70 @@ const PRDViewPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={() => navigate('/')}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <Button variant="outline" onClick={() => navigate('/')} size="sm" className="w-full sm:w-auto">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Generator
             </Button>
             {prdData && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <Clock className="w-4 h-4" />
                 Created {new Date(prdData.createdAt).toLocaleDateString()}
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => navigate('/gallery')}>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <Button variant="outline" onClick={() => navigate('/gallery')} size="sm" className="w-full sm:w-auto">
               View Gallery
             </Button>
             <Button 
               variant="outline" 
               onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto"
+              size="sm"
             >
               <MessageSquare className="w-4 h-4" />
-              Refine with AI
+              <span className="sm:inline">Refine with AI</span>
             </Button>
           </div>
         </div>
 
         {/* PRD Header Info */}
         {prdData && (
-          <Card className="p-6 bg-card/50 backdrop-blur-sm border-border">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold">{prdData.appName}</h1>
+          <Card className="p-4 sm:p-6 bg-card/50 backdrop-blur-sm border-border">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+              <div className="space-y-2 flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <h1 className="text-xl sm:text-2xl font-bold break-words">{prdData.appName}</h1>
                   {isSaved && (
-                    <Badge variant="outline" className="text-green-600 border-green-600">
+                    <Badge variant="outline" className="text-green-600 border-green-600 w-fit">
                       <Star className="w-3 h-3 mr-1" />
                       Saved
                     </Badge>
                   )}
                 </div>
-                <p className="text-muted-foreground">{prdData.description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground break-words">{prdData.description}</p>
                 {prdData.platform && (
-                  <Badge variant="outline">{prdData.platform}</Badge>
+                  <Badge variant="outline" className="w-fit">{prdData.platform}</Badge>
                 )}
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={copyToClipboard}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
-                </Button>
-                <Button variant="outline" size="sm" onClick={downloadPRD}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={copyToClipboard} className="flex-1 sm:flex-none">
+                    <Copy className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Copy</span>
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={downloadPRD} className="flex-1 sm:flex-none">
+                    <Download className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Download</span>
+                  </Button>
+                </div>
                 {!isSaved && (
-                  <Button variant="cosmic" size="sm" onClick={savePRD}>
+                  <Button variant="cosmic" size="sm" onClick={savePRD} className="w-full sm:w-auto">
                     <Save className="w-4 h-4 mr-2" />
                     Save PRD
                   </Button>
@@ -200,8 +203,8 @@ const PRDViewPage = () => {
 
         {/* PRD Content */}
         <Card className="bg-card/50 backdrop-blur-sm border-border">
-          <div className="p-6">
-            <div className="prose prose-invert max-w-none">
+          <div className="p-4 sm:p-6">
+            <div className="prose prose-invert max-w-none overflow-hidden">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 className="prose prose-sm dark:prose-invert max-w-none"
