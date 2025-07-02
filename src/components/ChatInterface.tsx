@@ -57,8 +57,13 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
       const savedMessages = localStorage.getItem('chatHistory');
       if (savedMessages) {
         const parsed = JSON.parse(savedMessages);
+        // Convert timestamp strings back to Date objects
+        const messagesWithDates = parsed.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
         console.log('ChatInterface: Loaded saved messages:', parsed.length);
-        setMessages(parsed);
+        setMessages(messagesWithDates);
       }
 
       // Check for API key
