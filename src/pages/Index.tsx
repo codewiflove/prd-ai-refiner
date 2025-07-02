@@ -93,7 +93,7 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8 relative z-20 bg-background">
+      <div className="container mx-auto px-6 py-8 relative z-20">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex justify-center">
             <TabsList className="grid w-full max-w-md grid-cols-4 bg-card/50 backdrop-blur-sm">
