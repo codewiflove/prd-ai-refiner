@@ -114,23 +114,88 @@ export const usePRDGeneration = () => {
   });
 
   const generatePRD = useCallback(async (formData: { prdIdea: string }): Promise<string | null> => {
-    const prompt = `Generate a comprehensive Product Requirements Document (PRD) based on the following app idea:
+    const prompt = `You are a senior full-stack product designer and engineer. I will give you a product idea, and you will generate a complete Product Requirements Document (PRD) for a fully functional working well prototype mvp app out of the box.
 
+Based on the following product idea, extract and infer the necessary details to fill out this comprehensive PRD structure:
+
+---
+
+🔧 Project Brief:
+
+Name: [Extract/infer project name from the idea]
+
+Description: [Extract the core description from the idea]
+
+Primary Goals:
+
+1. [Infer primary goal based on the idea]
+2. [Infer secondary goal]
+3. [Infer tertiary goal]
+4. [Infer quaternary goal]
+
+🧪 Tech Stack:
+
+Frontend: [Recommend appropriate frontend stack]
+Backend: [Recommend appropriate backend stack]
+Platform Type: [Infer platform type from idea]
+Framework Versions: Latest stable
+
+Use vite react with local storage only, no need for login or signup
+
+If need to use api key, please make admin setting to save & validate api key
+
+🔑 Core Features:
+
+[Feature 1 - Extract/infer from idea]
+[Feature 2 - Extract/infer from idea]
+[Feature 3 - Extract/infer from idea]
+[Feature 4 - Extract/infer from idea]
+[Integrations and sync - if applicable]
+
+🧽 User Flows:
+
+1. [User flow 1 based on core functionality]
+2. [User flow 2 for secondary actions]
+3. [User flow 3 for data management]
+4. [User flow 4 for settings/preferences]
+5. [User flow 5 for export/sharing]
+
+👤 User & Auth:
+
+Authentication via [Recommend auth method or none if not needed]
+OAuth scopes for [Relevant integrations]
+Row-level security: [Appropriate RLS policies]
+
+🖼️ UI/UX:
+
+Look & Feel: [Recommend UI style appropriate for the app]
+Dark mode, cosmic gradient, glowing edges, motion blur, clean grid
+
+Page Layouts: [List relevant pages for the app]
+Key Components: [List key UI components needed]
+
+📃 Database Schema:
+
+[Design appropriate database schema based on the app idea]
+users: [User table fields if needed]
+[Additional tables based on app requirements]
+
+---
+
+**Product Idea:**
 ${formData.prdIdea}
 
-Please create a professional, detailed PRD that includes:
-1. Executive Summary
-2. Product Overview
-3. Market Analysis & Target Audience
-4. Product Goals & Success Metrics
-5. Feature Requirements & User Stories
-6. Technical Architecture & Requirements
-7. User Experience & Interface Design
-8. Implementation Timeline & Milestones
-9. Risk Assessment & Mitigation
-10. Success Metrics & KPIs
+**Instructions:**
+- Analyze the product idea thoroughly
+- Extract explicit requirements and infer missing details logically
+- Create a comprehensive, professional PRD
+- Use clear markdown formatting with proper headings
+- Focus on creating a fully functional MVP prototype
+- Ensure all sections are detailed and actionable
+- Include technical specifications appropriate for the idea
+- Consider user experience and business viability
 
-Format the response in clear markdown with proper headings and sections.`;
+Generate the complete PRD now:`;
 
     return await generateResponse(prompt, 'product_manager');
   }, [generateResponse]);
