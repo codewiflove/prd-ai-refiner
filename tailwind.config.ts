@@ -67,7 +67,8 @@ export default {
 				lava: {
 					primary: 'hsl(var(--lava-primary))',
 					secondary: 'hsl(var(--lava-secondary))',
-					glow: 'hsl(var(--lava-glow))'
+					glow: 'hsl(var(--lava-glow))',
+					bright: 'hsl(45 100% 80%)'
 				}
 			},
 			backgroundImage: {
@@ -75,14 +76,17 @@ export default {
 				'gradient-cosmic-subtle': 'var(--gradient-cosmic-subtle)',
 				'gradient-glow': 'var(--gradient-glow)',
 				'gradient-lava': 'var(--gradient-lava)',
-				'gradient-lava-intense': 'var(--gradient-lava-intense)'
+				'gradient-lava-intense': 'var(--gradient-lava-intense)',
+				'gradient-lava-animate': 'var(--gradient-lava-animate)',
+				'gradient-lava-flow': 'var(--gradient-lava-flow)'
 			},
 			boxShadow: {
 				'cosmic': 'var(--shadow-cosmic)',
 				'glow': 'var(--shadow-glow)',
 				'card': 'var(--shadow-card)',
 				'lava': 'var(--shadow-lava)',
-				'lava-intense': 'var(--shadow-lava-intense)'
+				'lava-intense': 'var(--shadow-lava-intense)',
+				'lava-pulse': 'var(--shadow-lava-pulse)'
 			},
 			transitionTimingFunction: {
 				'cosmic': 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -132,6 +136,56 @@ export default {
 					'100%': {
 						backgroundPosition: '200% 0'
 					}
+				},
+				'lava-flow': {
+					'0%, 100%': {
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					}
+				},
+				'lava-glow': {
+					'0%, 100%': {
+						filter: 'brightness(1) saturate(1)',
+						boxShadow: 'var(--shadow-lava)'
+					},
+					'50%': {
+						filter: 'brightness(1.2) saturate(1.3)',
+						boxShadow: 'var(--shadow-lava-pulse)'
+					}
+				},
+				'lava-bubble': {
+					'0%, 100%': {
+						transform: 'scale(1) translateY(0px)'
+					},
+					'25%': {
+						transform: 'scale(1.02) translateY(-1px)'
+					},
+					'50%': {
+						transform: 'scale(1.05) translateY(-2px)'
+					},
+					'75%': {
+						transform: 'scale(1.02) translateY(-1px)'
+					}
+				},
+				'lava-particle': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(0px) scale(0.8)'
+					},
+					'25%': {
+						opacity: '1',
+						transform: 'translateY(-2px) scale(1)'
+					},
+					'75%': {
+						opacity: '1',
+						transform: 'translateY(-4px) scale(1.1)'
+					},
+					'100%': {
+						opacity: '0',
+						transform: 'translateY(-6px) scale(0.8)'
+					}
 				}
 			},
 			animation: {
@@ -139,7 +193,11 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 6s ease-in-out infinite',
 				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
-				'shimmer': 'shimmer 2s linear infinite'
+				'shimmer': 'shimmer 2s linear infinite',
+				'lava-flow': 'lava-flow 4s ease-in-out infinite',
+				'lava-glow': 'lava-glow 2s ease-in-out infinite',
+				'lava-bubble': 'lava-bubble 3s ease-in-out infinite',
+				'lava-particle': 'lava-particle 2s ease-in-out infinite'
 			}
 		}
 	},
