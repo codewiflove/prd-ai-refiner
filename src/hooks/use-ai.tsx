@@ -113,17 +113,10 @@ export const usePRDGeneration = () => {
     maxTokens: 4000,
   });
 
-  const generatePRD = useCallback(async (formData: any): Promise<string | null> => {
-    const prompt = `Generate a comprehensive Product Requirements Document (PRD) based on the following information:
+  const generatePRD = useCallback(async (formData: { prdIdea: string }): Promise<string | null> => {
+    const prompt = `Generate a comprehensive Product Requirements Document (PRD) based on the following app idea:
 
-App Name: ${formData.appName}
-Description: ${formData.description}
-Target Audience: ${formData.targetAudience || 'Not specified'}
-Platform: ${formData.platform || 'Not specified'}
-Primary Goals: ${formData.primaryGoals || 'Not specified'}
-Key Features: ${formData.keyFeatures || 'Not specified'}
-Tech Stack: ${formData.techStack || 'Not specified'}
-Timeline: ${formData.timeline || 'Not specified'}
+${formData.prdIdea}
 
 Please create a professional, detailed PRD that includes:
 1. Executive Summary

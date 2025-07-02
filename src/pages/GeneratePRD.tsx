@@ -3,24 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { usePRDGeneration } from "@/hooks/use-ai";
 import { AIService } from "@/lib/services/ai-service";
-import { Sparkles, Send, Loader2, Settings, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Send, Loader2, Settings, AlertCircle } from "lucide-react";
 import { LavaButton } from "@/components/ui/lava-button";
 
 interface FormData {
-  appName: string;
-  description: string;
-  targetAudience: string;
-  platform: string;
-  primaryGoals: string;
-  keyFeatures: string;
-  techStack: string;
-  timeline: string;
+  prdIdea: string;
 }
 
 const GeneratePRD = () => {
@@ -31,33 +22,16 @@ const GeneratePRD = () => {
   const [formData, setFormData] = useState<FormData>(() => {
     const saved = localStorage.getItem('prdFormData');
     return saved ? JSON.parse(saved) : {
-      appName: "",
-      description: "",
-      targetAudience: "",
-      platform: "",
-      primaryGoals: "",
-      keyFeatures: "",
-      techStack: "",
-      timeline: ""
+      prdIdea: ""
     };
   });
-
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('prdFormData', JSON.stringify(formData));
   }, [formData]);
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    if (!isExpanded && (formData.appName || formData.description)) {
-      setIsExpanded(true);
-    }
+  const handleInputChange = (value: string) => {
+    setFormData({ prdIdea: value });
   };
 
   const checkApiKey = () => {
@@ -66,10 +40,10 @@ const GeneratePRD = () => {
   };
 
   const generatePRDDocument = async () => {
-    if (!formData.appName.trim() || !formData.description.trim()) {
+    if (!formData.prdIdea.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please provide at least an app name and description.",
+        description: "Please describe your app idea to generate a PRD.",
         variant: "destructive"
       });
       return;
@@ -96,7 +70,8 @@ const GeneratePRD = () => {
       if (prd) {
         localStorage.setItem('currentPRD', prd);
         localStorage.setItem('currentPRDData', JSON.stringify({
-          ...formData,
+          appName: "Generated PRD",
+          description: formData.prdIdea.substring(0, 200) + (formData.prdIdea.length > 200 ? "..." : ""),
           createdAt: new Date().toISOString()
         }));
         
@@ -132,7 +107,7 @@ const GeneratePRD = () => {
     }
   };
 
-  const isFormValid = formData.appName.trim() && formData.description.trim();
+  const isFormValid = formData.prdIdea.trim().length > 0;
   const hasApiKey = checkApiKey();
 
   return (
@@ -146,142 +121,37 @@ const GeneratePRD = () => {
                 <h2 className="text-2xl font-bold">Create Your PRD with AI</h2>
               </div>
               <p className="text-muted-foreground">
-                Provide details about your app idea and let AI generate a comprehensive Product Requirements Document.
+                Describe your app idea and let AI generate a comprehensive Product Requirements Document.
               </p>
             </div>
 
             <div className="space-y-4">
-              {/* Always visible core fields */}
-              <div className="space-y-4 p-4 bg-muted/20 rounded-lg border">
-                <h3 className="font-semibold text-sm text-primary">Tell us about your app idea</h3>
-                
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="appName">App Name *</Label>
-                  <Input
-                    id="appName"
-                    placeholder="Enter your app name..."
-                    value={formData.appName}
-                    onChange={(e) => handleInputChange('appName', e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    onFocus={handleFocus}
-                    className="text-base"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="description">App Description *</Label>
                   <Textarea
-                    id="description"
-                    placeholder="Describe your app idea in detail. What problem does it solve? What are the main features? Who is it for?"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    id="prdIdea"
+                    placeholder="Describe your app idea in detail to generate a comprehensive Product Requirements Document...
+
+For example:
+• What problem does your app solve?
+• Who is your target audience?
+• What are the key features?
+• What platform will it run on?
+• Any specific technical requirements?
+
+The more details you provide, the better your PRD will be!"
+                    value={formData.prdIdea}
+                    onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    onFocus={handleFocus}
-                    rows={isFocused ? 4 : 3}
-                    className="resize-none text-base leading-relaxed transition-all duration-300"
+                    rows={12}
+                    className="resize-none text-base leading-relaxed transition-all duration-300 min-h-[300px]"
                   />
                 </div>
               </div>
-
-              {/* Expandable additional fields */}
-              {(isExpanded || isFocused) && (
-                <div className="space-y-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="w-full animate-in slide-in-from-top-2"
-                  >
-                    {isExpanded ? (
-                      <>
-                        <ChevronUp className="w-4 h-4 mr-2" />
-                        Hide Additional Details
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4 mr-2" />
-                        Add More Details (Optional)
-                      </>
-                    )}
-                  </Button>
-                  
-                  {isExpanded && (
-                    <div className="space-y-4 p-4 bg-muted/10 rounded-lg border animate-in slide-in-from-top-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="targetAudience">Target Audience</Label>
-                          <Input
-                            id="targetAudience"
-                            placeholder="e.g., Young professionals, Small business owners"
-                            value={formData.targetAudience}
-                            onChange={(e) => handleInputChange('targetAudience', e.target.value)}
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="platform">Platform</Label>
-                          <Input
-                            id="platform"
-                            placeholder="e.g., Web, Mobile (iOS/Android), Desktop"
-                            value={formData.platform}
-                            onChange={(e) => handleInputChange('platform', e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="primaryGoals">Primary Goals</Label>
-                        <Textarea
-                          id="primaryGoals"
-                          placeholder="What are the main objectives you want to achieve with this app?"
-                          value={formData.primaryGoals}
-                          onChange={(e) => handleInputChange('primaryGoals', e.target.value)}
-                          rows={2}
-                          className="resize-none"
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="keyFeatures">Key Features</Label>
-                        <Textarea
-                          id="keyFeatures"
-                          placeholder="List the most important features your app should have"
-                          value={formData.keyFeatures}
-                          onChange={(e) => handleInputChange('keyFeatures', e.target.value)}
-                          rows={3}
-                          className="resize-none"
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="techStack">Preferred Tech Stack</Label>
-                          <Input
-                            id="techStack"
-                            placeholder="e.g., React, Node.js, PostgreSQL"
-                            value={formData.techStack}
-                            onChange={(e) => handleInputChange('techStack', e.target.value)}
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="timeline">Timeline</Label>
-                          <Input
-                            id="timeline"
-                            placeholder="e.g., 3 months, 6 months"
-                            value={formData.timeline}
-                            onChange={(e) => handleInputChange('timeline', e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
               
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>Press Cmd/Ctrl + Enter to generate</span>
-                <span className="text-primary">* Required fields</span>
+                <span className="text-primary">{formData.prdIdea.length} characters</span>
               </div>
             </div>
 
