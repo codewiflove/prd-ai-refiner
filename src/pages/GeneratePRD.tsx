@@ -48,8 +48,8 @@ const GeneratePRD = () => {
   };
 
   const checkApiKey = () => {
-    const openaiKey = AIService.getApiKey('openai');
-    return openaiKey && openaiKey.length > 10;
+    // API keys are now handled by edge functions
+    return true;
   };
 
   const generatePRDDocument = async () => {

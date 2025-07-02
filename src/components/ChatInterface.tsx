@@ -66,8 +66,7 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
         setMessages(messagesWithDates);
       }
 
-      // Check for API key
-      const openaiKey = AIService.getApiKey('openai');
+      // API keys are now handled by edge functions
     } catch (error) {
       console.error('ChatInterface: Error during initialization:', error);
       // Reset to default state on error
@@ -102,12 +101,10 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
   }, [messages, streamingMessage]);
 
   const sendMessage = async () => {
-    const hasApiKey = !!AIService.getApiKey('openai');
-    if (!newMessage.trim() || isLoading || !hasApiKey) {
+    if (!newMessage.trim() || isLoading) {
       console.log('ChatInterface: sendMessage blocked', { 
         hasMessage: !!newMessage.trim(), 
-        isLoading, 
-        hasApiKey 
+        isLoading
       });
       return;
     }
@@ -299,40 +296,34 @@ export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
 
         <div className="p-4 border-t border-border">
           <div className="flex gap-2">
-            {(() => {
-              const hasApiKey = !!AIService.getApiKey('openai');
-              return (
-                <>
-                  <Input
-                    placeholder={hasApiKey ? `Ask the ${selectedPersona} for feedback...` : "Configure API key to chat"}
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && !isLoading && hasApiKey && sendMessage()}
-                    disabled={!hasApiKey || isLoading}
-                    className="transition-all focus:ring-2"
-                  />
-                  <Button 
-                    onClick={sendMessage} 
-                    variant="cosmic" 
-                    size="icon"
-                    disabled={!hasApiKey || isLoading || !newMessage.trim()}
-                    className="transition-all hover:scale-105"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </Button>
-                </>
-              );
-            })()}
+            <Input
+              placeholder={`Ask the ${selectedPersona} for feedback...`}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              disabled={isLoading}
+              className="flex-1"
+            />
+            <Button 
+              onClick={sendMessage} 
+              disabled={isLoading || !newMessage.trim()}
+              size="sm"
+            >
+              {isLoading ? (
+                <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+              ) : (
+                'Send'
+              )}
+            </Button>
           </div>
-          {!!AIService.getApiKey('openai') && (
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              AI responses support markdown formatting • Press Enter to send
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            AI responses support markdown formatting • Press Enter to send
+          </p>
         </div>
       </Card>
     </ErrorBoundary>

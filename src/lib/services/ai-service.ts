@@ -117,18 +117,6 @@ export class AIService {
     return messages;
   }
 
-  // Method to get API key from localStorage (temporary solution)
-  static getApiKey(provider: string): string | null {
-    return localStorage.getItem(`ai_api_key_${provider}`);
-  }
-
-  // Method to set API key in localStorage (temporary solution)
-  static setApiKey(provider: string, apiKey: string): void {
-    localStorage.setItem(`ai_api_key_${provider}`, apiKey);
-  }
-
-  // Method to remove API key from localStorage
-  static removeApiKey(provider: string): void {
-    localStorage.removeItem(`ai_api_key_${provider}`);
-  }
+  // API keys are now managed securely via Supabase Edge Function secrets
+  // No client-side API key management needed
 }

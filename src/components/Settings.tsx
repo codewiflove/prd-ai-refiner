@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { AIService } from "@/lib/services/ai-service";
-import { Key, Database, Download, Trash2, CheckCircle, AlertCircle } from "lucide-react";
+import { Database, Download, Trash2, Shield } from "lucide-react";
 
 export const Settings = () => {
   const { toast } = useToast();
-  const [apiKeys, setApiKeys] = useState({
-    openai: ""
-  });
   const [dataStats, setDataStats] = useState({
     prds: 0,
     chatMessages: 0,
@@ -21,10 +15,6 @@ export const Settings = () => {
   });
 
   useEffect(() => {
-    // Load API keys from AIService
-    const openaiKey = AIService.getApiKey('openai') || '';
-    setApiKeys({ openai: openaiKey });
-
     // Calculate data usage
     const prds = localStorage.getItem('currentPRD') ? 1 : 0;
     const chatHistory = localStorage.getItem('chatHistory');
@@ -46,67 +36,6 @@ export const Settings = () => {
       storageUsed: Math.round(totalSize / 1024) // Convert to KB
     });
   }, []);
-
-  const handleApiKeyChange = (provider: string, value: string) => {
-    const newKeys = { ...apiKeys, [provider]: value };
-    setApiKeys(newKeys);
-    
-    if (value.trim()) {
-      AIService.setApiKey(provider, value.trim());
-    } else {
-      AIService.removeApiKey(provider);
-    }
-    
-    toast({
-      title: "API Key Updated",
-      description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key has been saved.`
-    });
-  };
-
-  const validateApiKey = (provider: string) => {
-    const key = apiKeys[provider as keyof typeof apiKeys];
-    if (!key) {
-      toast({
-        title: "No API Key",
-        description: `Please enter an API key for ${provider}.`,
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    // Enhanced validation
-    if (provider === 'openai' && !key.startsWith('sk-')) {
-      toast({
-        title: "Invalid OpenAI Key",
-        description: "OpenAI API keys should start with 'sk-'.",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    if (key.length < 20) {
-      toast({
-        title: "Invalid API Key",
-        description: "The API key appears to be too short.",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    toast({
-      title: "API Key Valid",
-      description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format looks correct.`
-    });
-    return true;
-  };
-
-  const getKeyStatus = (provider: string) => {
-    const key = apiKeys[provider as keyof typeof apiKeys];
-    if (!key) return 'missing';
-    if (provider === 'openai' && !key.startsWith('sk-')) return 'invalid';
-    if (key.length < 20) return 'invalid';
-    return 'valid';
-  };
 
   const exportData = () => {
     const data = {
@@ -167,56 +96,33 @@ export const Settings = () => {
               <div>
                 <h3 className="text-lg font-semibold mb-2">API Configuration</h3>
                 <p className="text-sm text-muted-foreground">
-                  Configure API keys for enhanced AI features. All keys are stored locally in your browser.
+                  API keys are now securely managed via Supabase Edge Function secrets.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="openai-key" className="flex items-center gap-2">
-                    OpenAI API Key
-                    {getKeyStatus('openai') === 'valid' && (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    )}
-                    {getKeyStatus('openai') === 'invalid' && (
-                      <AlertCircle className="w-4 h-4 text-red-500" />
-                    )}
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="openai-key"
-                      type="password"
-                      placeholder="sk-..."
-                      value={apiKeys.openai}
-                      onChange={(e) => handleApiKeyChange("openai", e.target.value)}
-                      className={getKeyStatus('openai') === 'valid' ? 'border-green-500' : 
-                                getKeyStatus('openai') === 'invalid' ? 'border-red-500' : ''}
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => validateApiKey("openai")}
-                    >
-                      Validate
-                    </Button>
+                <div className="flex items-center justify-center p-8 border border-dashed border-border rounded-lg">
+                  <div className="text-center space-y-3">
+                    <Shield className="w-12 h-12 mx-auto text-green-500" />
+                    <div>
+                      <h4 className="font-medium">Secure API Key Management</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        API keys are stored securely in Supabase Edge Function secrets.
+                        <br />
+                        No sensitive data is stored in your browser.
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-green-600 border-green-600">
+                      ✓ OpenAI API Configured
+                    </Badge>
                   </div>
-                  {getKeyStatus('openai') === 'valid' && (
-                    <p className="text-xs text-green-600 dark:text-green-400">
-                      ✓ API key configured and ready to use
-                    </p>
-                  )}
-                  {getKeyStatus('openai') === 'invalid' && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      ⚠ Invalid API key format
-                    </p>
-                  )}
                 </div>
-
               </div>
 
               <div className="pt-4 border-t border-border">
                 <p className="text-xs text-muted-foreground">
-                  <Key className="w-3 h-3 inline mr-1" />
-                  API keys are stored locally and never sent to our servers.
+                  <Shield className="w-3 h-3 inline mr-1" />
+                  API keys are managed securely via Supabase secrets and never exposed to the client.
                 </p>
               </div>
             </div>
