@@ -24,9 +24,10 @@ interface Message {
 
 interface ChatInterfaceProps {
   prd: string;
+  onPRDUpdate?: (updatedPRD: string) => void;
 }
 
-export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
+export const ChatInterface = ({ prd, onPRDUpdate }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -44,7 +45,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   
   const [newMessage, setNewMessage] = useState("");
   const [selectedPersona, setSelectedPersona] = useState<"designer" | "engineer">("designer");
-  const [hasApiKey, setHasApiKey] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { generateStreamResponse, isLoading, error } = useAI();
@@ -68,8 +68,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
 
       // Check for API key
       const openaiKey = AIService.getApiKey('openai');
-      console.log('ChatInterface: API key exists:', !!openaiKey);
-      setHasApiKey(!!openaiKey);
     } catch (error) {
       console.error('ChatInterface: Error during initialization:', error);
       // Reset to default state on error
@@ -87,7 +85,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
           timestamp: new Date()
         }
       ]);
-      setHasApiKey(false);
     }
   }, []);
 
@@ -105,6 +102,7 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
   }, [messages, streamingMessage]);
 
   const sendMessage = async () => {
+    const hasApiKey = !!AIService.getApiKey('openai');
     if (!newMessage.trim() || isLoading || !hasApiKey) {
       console.log('ChatInterface: sendMessage blocked', { 
         hasMessage: !!newMessage.trim(), 
@@ -194,10 +192,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
     }
   };
 
-  const openSettings = () => {
-    window.dispatchEvent(new CustomEvent('open-settings'));
-  };
-
   const getAvatarIcon = (sender: string) => {
     switch (sender) {
       case "designer": return <Palette className="w-4 h-4" />;
@@ -265,21 +259,6 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
           </p>
         </div>
 
-        {!hasApiKey && (
-          <div className="p-4 border-b border-border">
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="flex items-center justify-between">
-                <span>OpenAI API key required for AI chat functionality.</span>
-                <Button size="sm" variant="outline" onClick={openSettings}>
-                  <Settings className="w-3 h-3 mr-1" />
-                  Configure
-                </Button>
-              </AlertDescription>
-            </Alert>
-          </div>
-        )}
-
         <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message) => (
@@ -320,29 +299,36 @@ export const ChatInterface = ({ prd }: ChatInterfaceProps) => {
 
         <div className="p-4 border-t border-border">
           <div className="flex gap-2">
-            <Input
-              placeholder={hasApiKey ? `Ask the ${selectedPersona} for feedback...` : "Configure API key to chat"}
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && !isLoading && hasApiKey && sendMessage()}
-              disabled={!hasApiKey || isLoading}
-              className="transition-all focus:ring-2"
-            />
-            <Button 
-              onClick={sendMessage} 
-              variant="cosmic" 
-              size="icon"
-              disabled={!hasApiKey || isLoading || !newMessage.trim()}
-              className="transition-all hover:scale-105"
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-            </Button>
+            {(() => {
+              const hasApiKey = !!AIService.getApiKey('openai');
+              return (
+                <>
+                  <Input
+                    placeholder={hasApiKey ? `Ask the ${selectedPersona} for feedback...` : "Configure API key to chat"}
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && !isLoading && hasApiKey && sendMessage()}
+                    disabled={!hasApiKey || isLoading}
+                    className="transition-all focus:ring-2"
+                  />
+                  <Button 
+                    onClick={sendMessage} 
+                    variant="cosmic" 
+                    size="icon"
+                    disabled={!hasApiKey || isLoading || !newMessage.trim()}
+                    className="transition-all hover:scale-105"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </Button>
+                </>
+              );
+            })()}
           </div>
-          {hasApiKey && (
+          {!!AIService.getApiKey('openai') && (
             <p className="text-xs text-muted-foreground mt-2 text-center">
               AI responses support markdown formatting • Press Enter to send
             </p>
