@@ -57,14 +57,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-[40vh] overflow-hidden">
+      <div className="relative min-h-screen overflow-hidden">
         <div 
           ref={heroRef}
           className="absolute inset-0 w-full h-[120%] bg-cover bg-center bg-no-repeat will-change-transform"
           style={{ backgroundImage: `url(${cosmicHero})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background"></div>
-          <div className="relative z-10 flex items-center justify-center h-full">
+          <div className="relative z-10 flex items-center justify-center min-h-screen">
             <div className="text-center space-y-4 max-w-4xl mx-auto px-6">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Sparkles className="w-8 h-8 text-primary" />
@@ -93,7 +93,7 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 relative z-20 bg-background">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex justify-center">
             <TabsList className="grid w-full max-w-md grid-cols-4 bg-card/50 backdrop-blur-sm">
